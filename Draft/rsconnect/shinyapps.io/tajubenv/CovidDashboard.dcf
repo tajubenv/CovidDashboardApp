@@ -1,0 +1,13 @@
+name: CovidDashboard
+title: CovidDashboard
+username:
+account: tajubenv
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1990795
+bundleId: 2941219
+url: https://tajubenv.shinyapps.io/CovidDashboard/
+when: 1585520931.69012
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app_old_working.R
