@@ -1,0 +1,23 @@
+---
+title: "Covid19 Tracking Dashboard"
+author: "Tyler Jubenville"
+date: "April 21, 2020"
+output: pdf_document
+---
+
+#    Purpose
+
+The goal of this shiny app is to display real time information on the current prevalence of Covid19 worldwide.
+
+#    Availability
+
+The app is hosted through shinyapps.io and can be found here: [https://tajubenv.shinyapps.io/CovidDashboard/](https://tajubenv.shinyapps.io/CovidDashboard/). 
+
+The app may also be run by pulling it from the University of Minnesota github, which can be found here:
+
+#    What data source(s) does your app use, if any? Are they publicly available? If not, indicate why not, and if it will be possible to make your app publicly available after the end of the class.
+#    App functions: What are the main functions/actions that the app allows the user to do? Provide brief instructions for how to carry out these main functions.
+#    Programming challenges: What were the main programming challenges that you faced in implementing your app?
+#    Division of labor: Who was responsible for the different aspects of your project?
+#    Future work: If you had time, what additional features would you like to implement in your app?
+
