@@ -1,23 +1,59 @@
 ---
 title: "Covid19 Tracking Dashboard"
 author: "Tyler Jubenville"
-date: "April 21, 2020"
+date: "April 24, 2020"
 output: pdf_document
 ---
 
-#    Purpose
+# Purpose
 
 The goal of this shiny app is to display real time information on the current prevalence of Covid19 worldwide.
 
-#    Availability
+# Availability
 
 The app is hosted through shinyapps.io and can be found here: [https://tajubenv.shinyapps.io/CovidDashboard/](https://tajubenv.shinyapps.io/CovidDashboard/). 
 
-The app may also be run by pulling it from the University of Minnesota github, which can be found here:
+The app may also be run by pulling it from the University of Minnesota github, which can be found here: [https://github.umn.edu/juben002/PUBH7462_Shiny_App](https://github.umn.edu/juben002/PUBH7462_Shiny_App)
 
-#    What data source(s) does your app use, if any? Are they publicly available? If not, indicate why not, and if it will be possible to make your app publicly available after the end of the class.
-#    App functions: What are the main functions/actions that the app allows the user to do? Provide brief instructions for how to carry out these main functions.
-#    Programming challenges: What were the main programming challenges that you faced in implementing your app?
-#    Division of labor: Who was responsible for the different aspects of your project?
-#    Future work: If you had time, what additional features would you like to implement in your app?
+
+# Data Source
+
+The data for this project is pulled from the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) github: [https://github.com/CSSEGISandData/COVID-19](https://github.com/CSSEGISandData/COVID-19)
+
+# App functions: 
+
+## Covid19 Map
+
+The map in this app will show the total number of confirmed cases, deaths, and recovered cases on a world map. The user may select which type of case they want to view using a drop down menu on the left. The user may move around the map using a mouse and the zoom buttons. Mousing over a specific circle will display the total number of cases within that country.
+
+## Top 10 Countries Cases Graph
+
+When the app is initially started, the top 10 countries in terms of confirmed cases will be selected. The top 10 cases are converted into a group of checkboxes. By default the top 3 boxes are checked. The user may select which countries they would like to appear on a cumulative graph. The cumulative graph will plot either confirmed cases, confirmed deaths, or recovered cases, depending on the user's selection.
+
+
+## Date Slider
+
+In addition to the two options above, the app includes a date slider, so the user may examine how the app looked at any point between the first confirmed case and the current date. The date slider will affect both the map and the graph.
+
+# Programming challenges: 
+
+## Combining the Data
+
+The main challenge here was getting the data to reformat properly and then merge it all together. I had some initial difficulty with this, but using the relatively new pivot_longer function made this much easier. The data source also changed slightly while I was developing the app, which added some confusion, as it updating while I was debugging the app.
+
+## Date Slider
+
+I had some issues getting the date slider to work correctly with dynamic dates. This is actually how I learned that you can declare UI components within the server section, and then set the values dynamically. Once I got that section working correctly, my leaflet map became very slow to respond to changes in the slider. This was because I had incorrectly set up my leaflet call and was reinitializing the entire map each time the date input was changed. This led me to correctly initializing the map once and manually clearing the markers and drawing new markers at each input change, which drastically improved the overall responsiveness.
+
+# Division of labor
+
+I completed this project alone, so overall there was very little division of labor.
+
+# Future work: 
+
+There are several features I would implement within this app with more time. The first would be to include population data for all of the countries included. I would then add selection for either per capita analysis or raw number analysis. 
+
+For the cumulative cases graph, I would like to add the ability to shift the dates of each country individually, so users could overlay countries from when they had their first cases in order to compare the response by country. 
+
+Finally, I would like to do a more thorough cleaning of the data and get as much of the analysis to a province/state or even county level if possible. Right now it is almost all at the country level, so zooming in further on the map has a limited usefulness.
 
