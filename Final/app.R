@@ -146,7 +146,9 @@ ui <- fluidPage(
                        "Recovered Cases"),
                      "Confirmed Cases"),
          ## Country Selector for cumulative plot
-         uiOutput("country_selector")
+         uiOutput("country_selector"),
+         ## Text describing app
+         uiOutput("app_description")
          ),
       
       # Main Panel definition
@@ -167,13 +169,33 @@ server <- function(input, output) {
    ## Call function to retrieve data on startup
    csse_data <- retrieve_covid_data()
    
+   ##
+   output$app_description <- renderUI({
+     title <- tags$b(htmltools::htmlEscape("Description:"))
+     line1 <- htmltools::htmlEscape("This app visualizes the current state of
+                                     COVID-19 prevalence based on data that is
+                                     aggregated by John Hopkins CSSE.")
+     line2 <- htmltools::htmlEscape("The date range may be selected using the slider above.
+                                     The graph uses the range, while the map shows only the end date.")
+     line3 <- htmltools::htmlEscape("The case types include: Confirmed Cases, which are cases with a 
+                                     positive test result. Confirmed Deaths, which are deaths officially
+                                     associated with COVID-19. Recovered Cases are confirmed cases that
+                                     are considered COVID-19 free. These definitions may vary based on the 
+                                     institution that is tracking them.")
+     line4 <- htmltools::htmlEscape("The country selector determines which countries will be shown
+                                     on the cumulative graph.")
+     line5 <- htmltools::htmlEscape("This data should not be used for medical guidance or even
+                                     as an official count of COVID-19 prevalence.")
+     HTML(paste(title, line1, line2, line3, line4, line5, sep = '<br/>'))
+   })
    ##  Define Date Slider 
    output$date_slider <- renderUI({
      sliderInput("date",
                  "Date:",
                  min = ymd(min(csse_data$cast_date)),
                  max = ymd(max(csse_data$cast_date)),
-                 value = ymd(max(csse_data$cast_date))
+                 value = c(ymd(min(csse_data$cast_date)),
+                           ymd(max(csse_data$cast_date)))
      )
    })
    
@@ -210,7 +232,7 @@ server <- function(input, output) {
      if(input$case_type == "Confirmed Cases"){
        leafletProxy("distPlot")   %>%
          clearShapes() %>%
-         addCircles(data = filter(csse_data, cast_date == ymd(input$date), !is.na(Lat)),
+         addCircles(data = filter(csse_data, cast_date == ymd(input$date[2]), !is.na(Lat)),
                     lng = ~Long, lat = ~Lat,
                     radius = ~sqrt(Confirmed.Cases) * 2000,
                     label = ~htmltools::htmlEscape(Confirmed.Cases.Text),
@@ -220,7 +242,7 @@ server <- function(input, output) {
      else if(input$case_type == "Confirmed Deaths"){
        leafletProxy("distPlot")   %>%
          clearShapes() %>%
-         addCircles(data = filter(csse_data, cast_date == ymd(input$date), !is.na(Lat)),
+         addCircles(data = filter(csse_data, cast_date == ymd(input$date[2]), !is.na(Lat)),
                     lng = ~Long, lat = ~Lat,
                     radius = ~sqrt(Confirmed.Deaths) * 2000,
                     label = ~htmltools::htmlEscape(Confirmed.Deaths.Text),
@@ -230,7 +252,7 @@ server <- function(input, output) {
      else if(input$case_type == "Recovered Cases"){
        leafletProxy("distPlot")   %>%
          clearShapes() %>%
-         addCircles(data = filter(csse_data, cast_date == ymd(input$date), !is.na(Lat)),
+         addCircles(data = filter(csse_data, cast_date == ymd(input$date[2]), !is.na(Lat)),
                     lng = ~Long, lat = ~Lat,
                     radius = ~sqrt(Recovered.Cases) * 2000,
                     label = ~htmltools::htmlEscape(Recovered.Cases.Text),
@@ -245,7 +267,8 @@ server <- function(input, output) {
        ## Filter by selectee countries and date. 
        ## Plot simple line and point plots
        filter(csse_data, Country.Region %in% input$countries, 
-                            cast_date <= ymd(input$date),
+                            cast_date <= ymd(input$date[2]),
+                            cast_date >= ymd(input$date[1]),
               Confirmed.Cases > 0) %>%
          ggplot(aes(cast_date, Confirmed.Cases, col = Country.Region)) + 
          geom_line() + geom_point() + 
@@ -257,7 +280,8 @@ server <- function(input, output) {
        ## Filter by selectee countries and date. 
        ## Plot simple line and point plots
        filter(csse_data, Country.Region %in% input$countries, 
-                            cast_date <= ymd(input$date)) %>%
+              cast_date <= ymd(input$date[2]),
+              cast_date >= ymd(input$date[1])) %>%
          ggplot(aes(cast_date, Confirmed.Deaths, col = Country.Region)) + 
          geom_line() + geom_point() + 
          labs(x = "Date", y = "Cumulative Deaths",
@@ -268,7 +292,8 @@ server <- function(input, output) {
        ## Filter by selectee countries and date. 
        ## Plot simple line and point plots
        filter(csse_data, Country.Region %in% input$countries, 
-                            cast_date <= ymd(input$date)) %>%
+              cast_date <= ymd(input$date[2]),
+              cast_date >= ymd(input$date[1])) %>%
          ggplot(aes(cast_date, Recovered.Cases, col = Country.Region)) + 
          geom_line() + geom_point() + 
          labs(x = "Date", y = "Cumulative Recovered Cases",
